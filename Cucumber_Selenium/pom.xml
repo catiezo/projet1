@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>Cucumber_Selenium</groupId>
+	<artifactId>Cucumber_Selenium</artifactId>
+	<version>1.6.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.junit.version>5.7.2</project.junit.version>
+		<project.junit.platform>1.5.2</project.junit.platform>
+		<project.selenium.version>4.0.0</project.selenium.version>
+		<project.extentReport.version>3.1.5</project.extentReport.version>
+		<maven.compiler.plugin>3.8.0</maven.compiler.plugin>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<sacem.selenium.commons.version>2.9.5</sacem.selenium.commons.version>
+		<ta.cucumber.runner.version>1.2.0-RELEASE</ta.cucumber.runner.version>
+		<io.cucumber.version>4.2.6</io.cucumber.version>
+	</properties>
+	<distributionManagement>
+		<repository>
+			<id>releases-repository</id>
+			<name>Referentiel des versions</name>
+			<url>${sacem.repository.release}</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots-repository</id>
+			<name>Referentiel des développements en cours</name>
+			<url>${sacem.repository.snapshot}</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.17.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aventstack</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>${project.extentReport.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.15</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.15</version>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>commons-io</groupId> -->
+		<!-- <artifactId>commons-io</artifactId> -->
+		<!-- <version>2.6</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${io.cucumber.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${io.cucumber.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${project.junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${project.junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<version>${project.junit.platform}</version>
+		</dependency>
+		<!-- essentiel pour cucumber -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>${project.junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${project.selenium.version}</version>
+		</dependency>
+		
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin}</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+			</plugin>
+			<!-- Configuration of the Squash TF framework used by the project -->
+			<plugin>
+				<groupId>org.squashtest.ta.galaxia</groupId>
+				<artifactId>squash-tf-gherkin-maven-plugin</artifactId>
+				<version>${ta.cucumber.runner.version}</version>
+				<configuration>
+					<featuresList>${ta.feature}</featuresList>
+					<squashRoot>features</squashRoot>
+					<!-- DryRunOptions for dryrun goal only -->
+					<additionnalDryRunChecks>true</additionnalDryRunChecks>
+
+					<!-- Define exporters -->
+					<gkexporters>
+						<exporter
+							implementation="org.squashtest.ta.commons.exporter.surefire.SurefireSuiteResultExporter">
+							<jenkinsAttachmentMode>${ta.jenkins.attachment.mode}</jenkinsAttachmentMode>
+						</exporter>
+
+						<exporter
+							implementation="org.squashtest.ta.gherkin.exporter.HtmlGherkinSuiteResultExporter" />
+					</gkexporters>
+
+					<!-- Define configurers -->
+					<gkconfigurers>
+						<configurer
+							implementation="org.squashtest.ta.maven.TmCallBack">
+							<!-- <tmCallBack> -->
+							<endpointURL>${status.update.events.url}</endpointURL>
+							<executionExternalId>${squash.ta.external.id}</executionExternalId>
+							<jobName>${jobname}</jobName>
+							<hostName>${hostname}</hostName>
+							<endpointLoginConfFile>${squash.ta.conf.file}</endpointLoginConfFile>
+							<reportBaseUrl>${ta.tmcallback.reportbaseurl}</reportBaseUrl>
+							<jobExecutionId>${ta.tmcallback.jobexecutionid}</jobExecutionId>
+							<reportName>${ta.tmcallback.reportname}</reportName>
+							<!-- </tmCallBack> -->
+						</configurer>
+					</gkconfigurers>
+				</configuration>
+
+				<executions>
+					<execution>
+						<goals>
+							<!-- to execute feature files -->
+							<goal>run</goal>
+							<!-- to check feature files are runable (DryRun) -->
+							<goal>dryrun</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- Squash TF maven plugin repository -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>org.squashtest.plugins.release</id>
+			<name>squashtest.org</name>
+			<url>http://repo.squashtest.org/maven2/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+</project>
